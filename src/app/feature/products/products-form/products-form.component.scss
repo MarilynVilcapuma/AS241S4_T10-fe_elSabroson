@@ -1,0 +1,337 @@
+// Contenedor del modal
+.modal-container {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 0;
+  width: 600px;
+  max-width: 95vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  position: relative;
+}
+
+// Header del modal
+.modal-header {
+  background: #e22727;
+  color: #ffffff;
+  padding: 20px 24px;
+  border-radius: 8px 8px 0 0;
+  position: relative;
+
+  h2 {
+    margin: 0 0 8px 0;
+    font-size: 1.4rem;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 14px;
+  }
+
+  .close-button {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    border: none;
+    background: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    border-radius: 4px;
+    padding: 6px;
+    cursor: pointer;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
+}
+
+// Grid del formulario
+.form-grid {
+  padding: 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+// Grupos de formulario
+.form-group {
+  display: flex;
+  flex-direction: column;
+
+  &.full-width {
+    grid-column: 1 / -1;
+  }
+
+  .form-label {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: #333;
+    gap: 6px;
+
+    .label-icon {
+      font-size: 16px;
+      color: #e22727;
+    }
+  }
+
+  .input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: #ffffff;
+
+    &:focus-within {
+      border-color: #e22727;
+    }
+
+    &.error {
+      border-color: #dc3545;
+      background: #fff5f5;
+    }
+
+    &.readonly {
+      background: #f8f9fa;
+      border-color: #e9ecef;
+
+      .form-input {
+        color: #6c757d;
+        cursor: not-allowed;
+      }
+    }
+
+    .currency-prefix {
+      padding: 0 10px;
+      font-weight: 600;
+      color: #28a745;
+      background: #f8fff9;
+      border-right: 1px solid #ddd;
+      font-size: 14px;
+    }
+
+    .input-icon {
+      position: absolute;
+      right: 10px;
+      color: #6c757d;
+      font-size: 18px;
+      pointer-events: none;
+    }
+  }
+
+  .form-input {
+    flex: 1;
+    padding: 10px 35px 10px 10px;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    background: transparent;
+    color: #333;
+
+    &.with-prefix {
+      padding-left: 6px;
+    }
+
+    &.textarea {
+      resize: vertical;
+      min-height: 70px;
+      font-family: inherit;
+    }
+
+    &::placeholder {
+      color: #999;
+    }
+
+    &.readonly {
+      cursor: not-allowed;
+    }
+  }
+
+  select.form-input {
+    cursor: pointer;
+  }
+}
+
+// Mensajes informativos
+.character-counter {
+  font-size: 12px;
+  color: #6c757d;
+  text-align: right;
+  margin-top: 4px;
+}
+
+.info-message {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #17a2b8;
+  margin-top: 4px;
+
+  mat-icon {
+    font-size: 14px;
+  }
+}
+
+.price-info {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #28a745;
+  margin-top: 4px;
+
+  mat-icon {
+    font-size: 14px;
+  }
+}
+
+.stock-indicator {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  margin-top: 4px;
+  font-weight: 500;
+
+  mat-icon {
+    font-size: 14px;
+  }
+
+  &.low {
+    color: #dc3545;
+  }
+
+  &.medium {
+    color: #ffc107;
+  }
+
+  &.high {
+    color: #28a745;
+  }
+}
+
+// Mensajes de error
+.error-messages {
+  margin-top: 4px;
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #dc3545;
+  font-size: 12px;
+  margin-bottom: 2px;
+
+  mat-icon {
+    font-size: 14px;
+  }
+}
+
+// Footer del modal
+.modal-footer {
+  padding: 16px 24px;
+  background: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  border-radius: 0 0 8px 8px;
+}
+
+// Botones
+.btn-primary, .btn-secondary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+
+  mat-icon {
+    font-size: 16px;
+  }
+}
+
+.btn-primary {
+  background: #e22727;
+  color: #ffffff;
+
+  &:hover:not(:disabled) {
+    background: #c11f1f;
+  }
+
+  &:disabled {
+    background: #ccc;
+    color: #666;
+    cursor: not-allowed;
+  }
+}
+
+.btn-secondary {
+  background: #ffffff;
+  color: #6c757d;
+  border: 1px solid #dee2e6;
+
+  &:hover {
+    background: #f8f9fa;
+    border-color: #adb5bd;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .modal {
+    width: 95vw;
+    margin: 10px;
+  }
+
+  .modal-header {
+    padding: 16px 20px;
+
+    h2 {
+      font-size: 1.2rem;
+    }
+  }
+
+  .form-grid {
+    padding: 20px;
+    grid-template-columns: 1fr;
+    gap: 16px;
+
+    .form-group.full-width {
+      grid-column: 1;
+    }
+  }
+
+  .modal-footer {
+    padding: 16px 20px;
+    flex-direction: column-reverse;
+    gap: 8px;
+
+    .btn-primary, .btn-secondary {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}

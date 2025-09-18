@@ -1,0 +1,76 @@
+<!-- Botón para pantallas pequeñas -->
+<button class="menu-toggle" (click)="toggleSidebar()">
+  <i class="fas" [ngClass]="isOpen ? 'fa-times' : 'fa-bars'"></i>
+</button>
+
+
+
+<!-- Sidebar -->
+<div class="sidebar" [ngClass]="{ 'open': isOpen, 'mini': !isOpen }">
+  <div class="logo">
+    <img src="logo.png" alt="Logo" />
+    <span>El Sabroson</span>
+  </div>
+
+
+  <div class="user-profile">
+    <img src="https://www.transparentpng.com/download/user/gray-user-profile-icon-png-fP8Q1P.png" alt="Usuario" />
+  </div>
+
+  <nav class="nav">
+    <a href="/dashboard" routerLinkActive="active" [class.selected]="active === 'Dashboard'"
+      (click)="setActive('Dashboard')">
+      <i class="ri-home-5-line"></i>
+      <span class="label">Dashboard</span>
+    </a>
+
+    <a href="/orders" routerLinkActive="active" [class.selected]="active === 'Pedidos'" (click)="setActive('Pedidos')">
+      <i class="ri-draft-line"></i>
+      <span class="label">Pedidos</span>
+    </a>
+
+    <a href="/kitchen" routerLinkActive="active" [class.selected]="active === 'Cocina'" (click)="setActive('Cocina')">
+      <i class="ri-knife-blood-line"></i>
+      <span class="label">Cocina</span>
+    </a>
+
+    <a href="/box" routerLinkActive="active" [class.selected]="active === 'Cajero'" (click)="setActive('Cajero')">
+      <i class="ri-shopping-bag-3-line"></i>
+      <span class="label">Caja</span>
+    </a>
+
+
+    <a href="/products" routerLinkActive="active" [class.selected]="active === 'Productos'"
+      (click)="setActive('Productos')">
+      <i class="ri-restaurant-2-line"></i>
+      <span class="label">Platos</span>
+    </a>
+
+    <a href="/users" routerLinkActive="active" [class.selected]="active === 'Usuarios'" (click)="setActive('Usuarios')">
+      <i class="ri-group-line"></i>
+      <span class="label">Usuarios</span>
+    </a>
+
+    <a href="/reports" routerLinkActive="active" [class.selected]="active === 'Reportes'"
+      (click)="setActive('Reportes')">
+      <i class="ri-bar-chart-2-line"></i>
+      <span class="label">Reportes</span>
+    </a>
+  </nav>
+
+  <div class="footer">
+    <div class="user-info">
+      <div class="circle">A</div>
+      <div>
+        <strong>Administrador</strong>
+        <div class="role">Administrador</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="logout-btn">
+    <i class="ri-logout-box-r-line"></i>
+    <span>Cerrar sesión</span> <!-- Aquí sí debes usar span -->
+  </button>
+
+</div>

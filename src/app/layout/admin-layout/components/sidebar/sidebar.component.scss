@@ -1,0 +1,270 @@
+body {
+  font-family: 'Poppins', sans-serif;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 280px;
+  background-color: #a40a0a;
+  color: #fff;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out, width 0.3s ease;
+  z-index: 1000;
+
+  &.open {
+    transform: translateX(0);
+  }
+
+  &.mini {
+    width: 80px;
+
+    .logo,
+    .label,
+    .footer .role,
+    .footer .logout-btn span {
+      display: none;
+    }
+
+    .nav a {
+      justify-content: center;
+    }
+
+    .footer .circle {
+      margin: auto;
+    }
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 1.8rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    padding-bottom: 8px;
+
+    img {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      object-fit: contain;
+    }
+  }
+
+  .nav {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 2.3rem;
+
+    a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0.5rem 0;
+      padding: 0.4rem;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1rem;
+
+      i {
+        width: 20px;
+        text-align: center;
+        font-size: 19px;
+      }
+
+      &:hover,
+      &.active,
+      &.selected {
+        background-color: #920c0c;
+      }
+
+      &.selected {
+        background-color: #ffae00da;
+        color: white;
+      }
+    }
+  }
+
+  .footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    padding-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .user-info {
+      display: flex;
+      align-items: center;
+
+      .circle {
+        background-color: #ffae00;
+        color: #000;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin-right: 0.5rem;
+      }
+
+      .role {
+        font-size: 0.8rem;
+        color: #ddd;
+      }
+    }
+  }
+}
+
+.logout-btn {
+  background-color: white;
+  color: #000000;
+  border: 1px solid #fff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 1rem;
+  transition: background-color 0.3s, border-color 0.3s;
+
+  i {
+    font-size: 1.1rem;
+  }
+
+  &:hover {
+    background-color: rgb(224, 224, 224);
+    border-color: rgb(224, 224, 224);
+  }
+}
+
+.user-profile {
+  display: flex;
+  justify-content: center;
+  margin: 1rem 0;
+  
+
+  img {
+    width: 80px;
+    height: 80px;
+    border-radius: 20%;
+    object-fit: cover;
+    background-color: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.menu-toggle {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  color: #8b0000;
+  z-index: 1100;
+  cursor: pointer;
+  display: block;
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+}
+
+/* RESPONSIVE BEHAVIOR */
+@media (min-width: 768px) {
+  .sidebar {
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 767px) {
+  .sidebar {
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 768px) {
+
+  .sidebar .logo {
+    margin-top: 2rem; // 🔽 baja el logo para evitar que lo tape el botón
+  }
+  // Imagen del usuario más pequeña
+  .user-profile {
+    display: flex;
+    justify-content: center;
+     margin-top: 3rem;
+
+    img {
+      width: 48px;
+      height: 48px;
+      border-radius: 20%;
+      object-fit: cover;
+      background-color: white;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+ .sidebar.mini {
+    .footer .user-info .role,
+    .footer .user-info strong,
+    .logout-btn span {
+      display: none;
+    }
+
+    .logout-btn {
+      width: 36px;
+      height: 36px;
+      justify-content: center;
+      padding: 6px;
+
+      i {
+        font-size: 1.2rem;
+      }
+    }
+  }
+  
+  .sidebar.open .user-profile {
+  margin-top: 0.5rem; // o 0 si quieres eliminarlo completamente
+}
+
+  .sidebar.open .user-profile img {
+  width: 64px;
+  height: 64px;
+}
+
+
+  // Ícono del botón hamburguesa que cambia en móvil
+  .menu-toggle {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    font-size: 1.5rem;
+    background: none;
+    border: none;
+    color: #ecebeb;
+    z-index: 1100;
+    cursor: pointer;
+    display: block;
+
+    i {
+      transition: transform 0.3s ease;
+    }
+
+    &.active i {
+      transform: rotate(90deg); // o cambia el ícono dinámicamente si prefieres
+    }
+  }
+}
+

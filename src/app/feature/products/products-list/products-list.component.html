@@ -1,0 +1,227 @@
+<div class="container">
+  <div class="header">
+    <h1>Platos y bebidas</h1>
+    <div class="button-header">
+      <button class="btn-nuevo" (click)="openProductForm()">+ Nuevo Plato</button>
+      <button class="btn-report" (click)="reportPdf()">📄 Generar</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Gestión de Platos y Bebidas</h2>
+      <p>Administra los Platos y bebidas del sistema</p>
+      <div class="toolbar">
+        <div class="search-container">
+          <input
+            type="text"
+            placeholder="Buscar por nombre, descripción o categoría..."
+            [(ngModel)]="searchTerm"
+            (input)="filterProducts()"
+            class="search-input"
+            />
+            <span class="search-icon">🔍</span>
+          </div>
+
+          <select [(ngModel)]="filterCategory" (change)="filterProducts()" class="filter-select">
+            <option value="">Todas las categorías</option>
+            @for (cat of categories; track cat) {
+              <option [value]="cat">{{ cat }}</option>
+            }
+          </select>
+
+          <select [(ngModel)]="filterState" (change)="filterProducts()" class="filter-select">
+            <option value="">Todos los estados</option>
+            <option value="A">Activos</option>
+            <option value="I">Inactivos</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Información de paginación y resultados -->
+      <div class="table-info">
+        <div class="entries-info">
+          Mostrando {{ getStartRecord() }} a {{ getEndRecord() }} de {{ totalProducts }} registros
+          @if (searchTerm || filterCategory || filterState) {
+            <span class="filtered-info">
+              (filtrado de {{ products.length }} registros totales)
+            </span>
+          }
+        </div>
+        <div class="entries-per-page">
+          <label>Mostrar
+            <select [(ngModel)]="pageSize" (change)="onPageSizeChange()" class="page-size-select">
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+            registros
+          </label>
+        </div>
+      </div>
+
+      <!-- Tabla -->
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th (click)="sortBy('name')" class="sortable">
+                Nombre
+                <span class="sort-indicator" [ngClass]="getSortClass('name')">{{ getSortIcon('name') }}</span>
+              </th>
+              <th (click)="sortBy('category')" class="sortable">
+                Categoría
+                <span class="sort-indicator" [ngClass]="getSortClass('category')">{{ getSortIcon('category') }}</span>
+              </th>
+              <th>Descripción</th>
+              <th (click)="sortBy('price')" class="sortable">
+                Precio
+                <span class="sort-indicator" [ngClass]="getSortClass('price')">{{ getSortIcon('price') }}</span>
+              </th>
+              <th (click)="sortBy('stock')" class="sortable">
+                Stock
+                <span class="sort-indicator" [ngClass]="getSortClass('stock')">{{ getSortIcon('stock') }}</span>
+              </th>
+              <th (click)="sortBy('registrationDate')" class="sortable">
+                Fecha Registro
+                <span class="sort-indicator" [ngClass]="getSortClass('registrationDate')">{{ getSortIcon('registrationDate') }}</span>
+              </th>
+              <th>Estado</th>
+              <th class="actions-header">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (product of getPaginatedProducts(); track product; let i = $index) {
+              <tr
+                class="table-row"
+                [class.even]="i % 2 === 0"
+                [class.odd]="i % 2 === 1">
+                <td class="name-cell">
+                  <strong>{{ product.name }}</strong>
+                </td>
+                <td>
+                  <span class="categoria" [ngClass]="product.category === 'P' ? 'plato' : 'bebida'">
+                    {{ product.category === 'P' ? 'Plato' : 'Bebida' }}
+                  </span>
+                </td>
+                <td class="description-cell">{{ product.description }}</td>
+                <td class="price-cell">
+                  <span class="price-value">{{ product.price | currency:'S/.' }}</span>
+                </td>
+                <td class="stock-cell">
+                  <span class="stock-badge" [ngClass]="getStockClass(product.stock)">
+                    {{ product.stock }} cant.
+                  </span>
+                </td>
+                <td class="date-cell">{{ product.registrationDate ? formatDate(product.registrationDate) : '-' }}</td>
+                <td>
+                  <span class="estado" [ngClass]="product.state === 'A' ? 'activo' : 'inactivo'">
+                    {{ product.state === 'A' ? 'Activo' : 'Inactivo' }}
+                  </span>
+                </td>
+                <td class="acciones">
+                  @if (product.state === 'A') {
+                    <button
+                      class="icon-btn editar"
+                      title="Editar"
+                      (click)="editProduct(product)"
+                      >
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                  }
+                  @if (product.state === 'A') {
+                    <button
+                      class="icon-btn eliminar"
+                      title="Eliminar"
+                      (click)="deleteProduct(product.productId)"
+                      >
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  }
+                  @if (product.state === 'I') {
+                    <button
+                      class="icon-btn restaurar"
+                      title="Restaurar"
+                      (click)="restoreProduct(product.productId)"
+                      >
+                      <mat-icon>restore</mat-icon>
+                    </button>
+                  }
+                </td>
+              </tr>
+            }
+            @if (getPaginatedProducts().length === 0) {
+              <tr class="no-data">
+                <td colspan="8" class="no-data-cell">
+                  <div class="no-data-message">
+                    <span class="no-data-icon">📋</span>
+                    <p>No se encontraron registros</p>
+                    <small>Intenta ajustar los filtros de búsqueda</small>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Paginación -->
+      @if (totalProducts > 0) {
+        <div class="pagination-container">
+          <div class="pagination-info">
+            Página {{ currentPage + 1 }} de {{ getTotalPages() }}
+          </div>
+          <div class="pagination">
+            <button
+              class="page-btn"
+              [disabled]="currentPage === 0"
+              (click)="goToPage(0)"
+              title="Primera página">
+              ⏮
+            </button>
+            <button
+              class="page-btn"
+              [disabled]="currentPage === 0"
+              (click)="previousPage()"
+              title="Página anterior">
+              ◀
+            </button>
+            <span class="page-numbers">
+              @for (page of getVisiblePages(); track page) {
+                <button
+                  class="page-btn"
+                  [class.active]="page === currentPage"
+                  (click)="goToPage(page)">
+                  {{ page + 1 }}
+                </button>
+              }
+            </span>
+            <button
+              class="page-btn"
+              [disabled]="currentPage === getTotalPages() - 1"
+              (click)="nextPage()"
+              title="Página siguiente">
+              ▶
+            </button>
+            <button
+              class="page-btn"
+              [disabled]="currentPage === getTotalPages() - 1"
+              (click)="goToPage(getTotalPages() - 1)"
+              title="Última página">
+              ⏭
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+
+  <app-products-form
+    [visible]="showProductForm"
+    [productData]="currentProduct"
+    (cancel)="onProductFormCancel()"
+    (create)="onProductFormCreate($event)"
+    (update)="onProductFormUpdate($event)">
+  </app-products-form>

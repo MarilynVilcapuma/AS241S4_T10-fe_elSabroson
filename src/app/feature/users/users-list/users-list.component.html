@@ -1,0 +1,132 @@
+<div class="container">
+  <div class="header">
+    <h1>Usuarios</h1>
+    <div class="btn-group">
+      <button class="btn" (click)="openUserForm()"><i class="fa-solid fa-user-plus"></i> Nuevo Usuario</button>
+      <button class="btn" (click)="reportPdf()"><i class="fas fa-file-lines"></i> Reporte</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Gestión de Usuarios </h2>
+      <p>Administra los usuarios del sistema</p>
+      <div class="toolbar">
+        <input type="text" placeholder="Buscar por nombre, documento o email..." [(ngModel)]="searchTerm"
+          (input)="filterUsers()" />
+
+          <select [(ngModel)]="selectedRole" (change)="filterUsers()">
+            <option value="">Todos los roles</option>
+            <option value="Admin">Admin</option>
+            <option value="Cocinero">Cocinero</option>
+            <option value="Mesero">Mesero</option>
+            <option value="Cajero">Cajero</option>
+            <option value="Cliente">Cliente</option>
+          </select>
+
+          <select [(ngModel)]="selectedState" (change)="filterUsers()">
+            <option value="">Todos los estados</option>
+            <option value="A">Activos</option>
+            <option value="I">Inactivos <i class="fa-solid fa-user-xmark"></i></option>
+          </select>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Foto</th>
+            <th>Nombre</th>
+            <th>Documento</th>
+            <th>Correo</th>
+            <th>Contraseña</th>
+            <th>Celular</th>
+            <th>Rol</th>
+            <th>Registro</th>
+            <th>Estado</th>
+            <th class="acciones">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of paginatedUsers; track user) {
+            <tr class="values_data">
+              <!-- Foto del usuario -->
+              <td data-label="Imagen">
+                <!-- Imagen si existe -->
+                @if (user.imagePath) {
+                  <img [src]="getImageUrl(user.imagePath)" alt="Imagen Usuario" class="user-image">
+                } @else {
+                  <div class="user-initials">
+                    {{ getInitials(user.name, user.last_name) }}
+                  </div>
+                }
+                <!-- Iniciales si no hay imagen -->
+              </td>
+              <td data-label="Nombre"> <i class="fa-solid fa-user"></i> {{ user.name }} {{ user.last_name }}</td>
+              <td data-label="Documento"><i class="fa-solid fa-address-card"></i> {{ user.document_type }}:{{
+            user.document_number }}</td>
+            <td data-label="Correo"><i class="fa-solid fa-envelope"></i> {{ user.email }}</td>
+            <td data-label="Contraseña">
+              @if (!user.showPassword) {
+                <span>••••••••••</span>
+              }
+              @if (user.showPassword) {
+                <span>{{ user.password }}</span>
+              }
+              <button (click)="togglePasswordVisibility(user)" class="toggle-password-btn">
+                <i [ngClass]="user.showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+              </button>
+            </td>
+            <td data-label="Celular"><i class="fa-solid fa-phone"></i>{{ user.cellphone }}</td>
+            <td data-label="Rol">
+              <span class="badge" [ngClass]="user.role.toLowerCase()">
+                {{ user.role }}
+              </span>
+            </td>
+            <td data-label="Registro"> <i class="fa-regular fa-calendar"></i> {{ user.registration_date }}</td>
+            <td data-label="Estado">
+              <span class="estado" [ngClass]="user.state.toLowerCase()">
+                {{ user.state === 'A' ? 'Activo' : 'Inactivo' }}
+              </span>
+            </td>
+            <td data-label="Acciones" class="acciones">
+              <button class="icon-btn editar" title="Editar" (click)="editUser(user)" [disabled]="user.state === 'I'"
+                [ngClass]="{ 'disabled-btn': user.state === 'I' }">
+                <i class="fa-solid fa-user-pen"></i>
+              </button>
+              <button class="icon-btn eliminar" title="Eliminar" (click)="deleteUser(user.users_id!)"
+                [disabled]="user.state === 'I'" [ngClass]="{ 'disabled-btn': user.state === 'I' }">
+                <i class="fas fa-trash"></i>
+              </button>
+              <button class="icon-btn restaurar" title="Restaurar" (click)="restoreUser(user.users_id!)"
+                [disabled]="user.state === 'A'" [ngClass]="{ 'disabled-btn': user.state === 'A' }">
+                <i class="fa-solid fa-rotate"></i>
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <div class="pagination">
+      @for (page of [].constructor(totalPages); track page; let i = $index) {
+        <button [class.active]="currentPage === i + 1"
+          (click)="changePage(i + 1)">
+          {{ i + 1 }}
+        </button>
+      }
+    </div>
+
+  </div>
+
+  <app-users-form
+    [hidden]="!showUserForm"
+    [visible]="showUserForm"
+    [user]="selectedUser"
+    (closeForm)="closeUserForm()"
+    (create)="createUser($event)"
+    (update)="updateUser($event)"
+    (imageSelected)="onImageFromChild($event)">
+  </app-users-form>
+
+</div>

@@ -1,0 +1,237 @@
+@if (visible) {
+  <div class="modal-container">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>{{ productData ? 'Editar Plato o bebida' : 'Nuevo Plato o bebida' }}</h2>
+        <p>{{ productData ? 'Modifique los detalles del plato o bebida seleccionado' : 'Complete el formulario para crear un nuevo plato o bebida en el sistema' }}</p>
+        <button class="close-button" aria-label="Cerrar modal" (click)="onCancel()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <form class="form-grid" [formGroup]="productForm" (ngSubmit)="onSubmit()">
+        <input type="hidden" formControlName="productId">
+        <!-- Nombre del producto -->
+        <div class="form-group full-width">
+          <label for="name" class="form-label">
+            <mat-icon class="label-icon">restaurant</mat-icon>
+            Nombre del Plato o Bebida
+          </label>
+          <div class="input-wrapper" [class.error]="hasError('name', 'required') || hasError('name', 'minlength') || hasError('name', 'maxlength') || hasError('name', 'pattern')">
+            <input
+              type="text"
+              id="name"
+              class="form-input"
+              placeholder="Ej: Pizza Margherita, Coca Cola, etc."
+              formControlName="name"
+              autocomplete="off" />
+              <mat-icon class="input-icon">edit</mat-icon>
+            </div>
+            <div class="error-messages">
+              @if (hasError('name', 'required')) {
+                <div class="error-message">
+                  <mat-icon>error</mat-icon>
+                  El nombre del producto es obligatorio
+                </div>
+              }
+              @if (hasError('name', 'minlength')) {
+                <div class="error-message">
+                  <mat-icon>error</mat-icon>
+                  El nombre debe tener al menos 3 caracteres
+                </div>
+              }
+              @if (hasError('name', 'maxlength')) {
+                <div class="error-message">
+                  <mat-icon>error</mat-icon>
+                  El nombre no puede exceder los 50 caracteres
+                </div>
+              }
+              @if (hasError('name', 'pattern')) {
+                <div class="error-message">
+                  <mat-icon>error</mat-icon>
+                  El nombre solo puede contener letras, tildes, ñ y espacios
+                </div>
+              }
+            </div>
+          </div>
+          <!-- Descripción -->
+          <div class="form-group full-width">
+            <label for="description" class="form-label">
+              <mat-icon class="label-icon">description</mat-icon>
+              Descripción
+            </label>
+            <div class="input-wrapper" [class.error]="hasError('description', 'required') || hasError('description', 'maxlength') || hasError('description', 'pattern')">
+              <textarea
+                id="description"
+                class="form-input textarea"
+                placeholder="Describe las características principales del producto..."
+                formControlName="description"
+              rows="3"></textarea>
+              <mat-icon class="input-icon">notes</mat-icon>
+            </div>
+            <div class="character-counter">
+              {{ productForm.get('description')?.value?.length || 0 }}/200 caracteres
+            </div>
+            <div class="error-messages">
+              @if (hasError('description', 'required')) {
+                <div class="error-message">
+                  <mat-icon>error</mat-icon>
+                  La descripción es obligatoria
+                </div>
+              }
+              @if (hasError('description', 'maxlength')) {
+                <div class="error-message">
+                  <mat-icon>error</mat-icon>
+                  La descripción no puede exceder los 200 caracteres
+                </div>
+              }
+              @if (hasError('description', 'pattern')) {
+                <div class="error-message">
+                  <mat-icon>error</mat-icon>
+                  La descripción no puede contener solo espacios
+                </div>
+              }
+            </div>
+          </div>
+          <!-- Categoría -->
+          <div class="form-group">
+            <label for="category" class="form-label">
+              <mat-icon class="label-icon">category</mat-icon>
+              Categoría
+            </label>
+            <div class="input-wrapper" [class.error]="hasError('category', 'required') || hasError('category', 'pattern')">
+              <select id="category" class="form-input" formControlName="category">
+                <option value="">Seleccione una categoría</option>
+                @for (option of categoriesOptions; track option) {
+                  <option [value]="option.value">
+                    {{ option.icon }} {{ option.label }}
+                  </option>
+                }
+              </select>
+              <mat-icon class="input-icon">expand_more</mat-icon>
+            </div>
+            <div class="error-messages">
+              @if (hasError('category', 'required')) {
+                <div class="error-message">
+                  <mat-icon>error</mat-icon>
+                  Debe seleccionar una categoría
+                </div>
+              }
+            </div>
+          </div>
+          <!-- Fecha de Registro -->
+          <div class="form-group">
+            <label for="registrationDate" class="form-label">
+              <mat-icon class="label-icon">event</mat-icon>
+              Fecha de Registro
+            </label>
+            <div class="input-wrapper readonly">
+              <input
+                type="date"
+                id="registrationDate"
+                class="form-input readonly"
+                [value]="getCurrentDateForInput()"
+                readonly
+                tabindex="-1" />
+                <mat-icon class="input-icon">calendar_today</mat-icon>
+              </div>
+              <div class="info-message">
+                <mat-icon>info</mat-icon>
+                Se obtiene automáticamente del servidor
+              </div>
+            </div>
+            <!-- Precio -->
+            <div class="form-group">
+              <label for="price" class="form-label">
+                <mat-icon class="label-icon">attach_money</mat-icon>
+                Precio (S/.)
+              </label>
+              <div class="input-wrapper" [class.error]="hasError('price', 'required') || hasError('price', 'min')">
+                <div class="currency-prefix">S/.</div>
+                <input
+                  type="number"
+                  id="price"
+                  class="form-input with-prefix"
+                  placeholder="0.00"
+                  formControlName="price"
+                  step="0.01"
+                  min="0" />
+                  <mat-icon class="input-icon">payments</mat-icon>
+                </div>
+                @if (productForm.get('category')?.value) {
+                  <div class="price-info">
+                    <mat-icon>info</mat-icon>
+                    {{ productForm.get('category')?.value === 'P' ? 'Precio mínimo para platos: S/. 10.00' : 'Precio mínimo para bebidas: S/. 1.00' }}
+                  </div>
+                }
+                <div class="error-messages">
+                  @if (hasError('price', 'required')) {
+                    <div class="error-message">
+                      <mat-icon>error</mat-icon>
+                      El precio es obligatorio
+                    </div>
+                  }
+                  @if (hasError('price', 'min')) {
+                    <div class="error-message">
+                      <mat-icon>error</mat-icon>
+                      {{ productForm.get('category')?.value === 'P' ? 'El precio debe ser mayor o igual a S/. 10.00' : 'El precio debe ser mayor o igual a S/. 1.00' }}
+                    </div>
+                  }
+                </div>
+              </div>
+              <!-- Stock -->
+              <div class="form-group">
+                <label for="stock" class="form-label">
+                  <mat-icon class="label-icon">inventory_2</mat-icon>
+                  Stock Disponible
+                </label>
+                <div class="input-wrapper" [class.error]="hasError('stock', 'required') || hasError('stock', 'min') || hasError('stock', 'max')">
+                  <input
+                    type="number"
+                    id="stock"
+                    class="form-input"
+                    placeholder="Cantidad disponible"
+                    formControlName="stock"
+                    min="1"
+                    max="9999" />
+                    <mat-icon class="input-icon">inventory</mat-icon>
+                  </div>
+                  <div class="stock-indicator" [class]="getStockLevelClass()">
+                    <mat-icon>{{ getStockIcon() }}</mat-icon>
+                    {{ getStockMessage() }}
+                  </div>
+                  <div class="error-messages">
+                    @if (hasError('stock', 'required')) {
+                      <div class="error-message">
+                        <mat-icon>error</mat-icon>
+                        El stock es obligatorio
+                      </div>
+                    }
+                    @if (hasError('stock', 'min')) {
+                      <div class="error-message">
+                        <mat-icon>error</mat-icon>
+                        El stock debe ser mayor a 0
+                      </div>
+                    }
+                    @if (hasError('stock', 'max')) {
+                      <div class="error-message">
+                        <mat-icon>error</mat-icon>
+                        El stock no puede exceder 9999 unidades
+                      </div>
+                    }
+                  </div>
+                </div>
+              </form>
+              <!-- Footer del modal -->
+              <div class="modal-footer">
+                <button class="btn-secondary" type="button" (click)="onCancel()">
+                  <mat-icon>close</mat-icon>
+                  Cancelar
+                </button>
+                <button class="btn-primary" type="button" (click)="onSubmit()" [disabled]="productForm.invalid">
+                  <mat-icon>{{ productData ? 'save' : 'add' }}</mat-icon>
+                  {{ productData ? 'Guardar Cambios' : 'Crear Producto' }}
+                </button>
+              </div>
+            </div>
+          </div>
+        }
