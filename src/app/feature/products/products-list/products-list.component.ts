@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, PLATFORM_ID, Inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common'; // Asegúrate de importar isPlatformBrowser
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,8 +8,6 @@ import { ProductService } from '../../../core/services/products.service';
 import { Products } from '../../../core/interfaces/products';
 import Swal from 'sweetalert2';
 import { ProductsFormComponent } from '../products-form/products-form.component';
-import { environment } from '../../../../environments/environment';
-
 
 @Component({
   selector: 'app-products-list',
@@ -40,18 +38,25 @@ export class ProductsListComponent implements OnInit {
 
   // Variables para la paginación estilo DataTables
   currentPage: number = 0;
-  pageSize: number = 10; // Cambiado a 10 por defecto
+  pageSize: number = 10;
   totalProducts: number = 0;
 
   // Variables para ordenamiento
   sortColumn: string = '';
   sortDirection: 'asc' | 'desc' = 'asc';
 
-  constructor(private productService: ProductService) {}
+  // Inyectar el servicio y PLATFORM_ID en el constructor
+  constructor(
+    private productService: ProductService,
+    @Inject(PLATFORM_ID) private platformId: Object // Agrega esta inyección
+  ) {}
 
   ngOnInit(): void {
-    this.filterState = this.showInactives ? 'I' : 'A';
-    this.loadProducts();
+    // ⚠️ La solución al problema está aquí:
+    if (isPlatformBrowser(this.platformId)) {
+      this.filterState = this.showInactives ? 'I' : 'A';
+      this.loadProducts();
+    }
   }
 
   toggleList() {
@@ -99,7 +104,7 @@ export class ProductsListComponent implements OnInit {
     });
 
     this.totalProducts = this.filteredProducts.length;
-    this.currentPage = 0; // Resetear a la primera página cuando se filtran los datos
+    this.currentPage = 0;
     this.applySorting();
   }
 
@@ -129,17 +134,14 @@ export class ProductsListComponent implements OnInit {
       let valueA: any = a[this.sortColumn as keyof Products];
       let valueB: any = b[this.sortColumn as keyof Products];
 
-      // Convertir a string si es necesario para la comparación
       if (typeof valueA === 'string') valueA = valueA.toLowerCase();
       if (typeof valueB === 'string') valueB = valueB.toLowerCase();
 
-      // Manejar fechas
       if (this.sortColumn === 'registrationDate') {
         valueA = valueA ? new Date(valueA).getTime() : 0;
         valueB = valueB ? new Date(valueB).getTime() : 0;
       }
 
-      // Manejar números
       if (this.sortColumn === 'price' || this.sortColumn === 'stock') {
         valueA = Number(valueA) || 0;
         valueB = Number(valueB) || 0;
@@ -206,7 +208,7 @@ export class ProductsListComponent implements OnInit {
   }
 
   onPageSizeChange() {
-    this.currentPage = 0; // Resetear a la primera página
+    this.currentPage = 0;
   }
 
   getVisiblePages(): number[] {

@@ -1,8 +1,8 @@
 import Swal from 'sweetalert2';
-import { Component, OnInit, inject, ViewChild } from '@angular/core';
+import { Component, OnInit, inject, ViewChild, PLATFORM_ID, Inject } from '@angular/core';
 import { UsersFormComponent } from '../users-form/users-form.component';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { UsersService } from '../../../core/services/users.service';
 import { Users } from '../../../core/interfaces/users';
 import { environment } from '../../../../environments/environment';
@@ -14,7 +14,7 @@ import { environment } from '../../../../environments/environment';
   templateUrl: './users-list.component.html',
   styleUrl: './users-list.component.scss'
 })
-export class UsersListComponent {
+export class UsersListComponent implements OnInit {
 
   @ViewChild(UsersFormComponent) userFormComponent!: UsersFormComponent;
 
@@ -32,9 +32,15 @@ export class UsersListComponent {
 
   private userService = inject(UsersService);
 
-  ngOnInit() {
-    this.loadUsers();
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+
+  ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      this.loadUsers();
+    }
   }
+
+  // Metodo para obtener la url de la imagen del usuario o una imagen por defecto
 
   getImageUrl(imagePath?: string): string {
     return imagePath
